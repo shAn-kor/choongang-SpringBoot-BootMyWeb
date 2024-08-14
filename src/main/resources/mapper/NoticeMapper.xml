@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.coding404.myWeb.notice.NoticeMapper">
+    <insert id="" parameterType="string">
+        INSERT INTO PRODUCT(
+             PROD_ENDDATE,
+             PROD_WRITER,
+             PROD_NAME,
+             PROD_PRICE,
+             PROD_COUNT,
+             PROD_DISCOUNT,
+             PROD_PURCHASE_YN,
+             PROD_CONTENT,
+             PROD_COMMENT
+        ) VALUES (
+                #{prodEndDate},
+                #{prodWriter},
+                #{prodName},
+                #{prodPrice},
+                #{prodCount},
+                #{prodDiscount},
+                #{prodPurchaseYn},
+                #{prodContent},
+                #{prodComment}
+    )
+    </insert>
+
+    <!--동적쿼리 test 구문에는 vo의 getter나 map의 key 값이 사용가능합니다.-->
+    <select id="getNoticeNullProductList" parameterType="string" resultType="ProductVO">
+        SELECT P.*
+        FROM PRODUCT P
+                 LEFT JOIN NOTICE N ON P.PROD_WRITER = N.NOTICE_WRITER_ID
+        WHERE N.PROD_NAME IS NULL
+    </select>
+    <select id="getProduct" resultType="ProductVO" parameterType="int">
+    </select>
+
+    <update id="updateProduct" parameterType="ProductVO">
+        UPDATE PRODUCT SET
+               PROD_ENDDATE=#{prodEndDate},
+               PROD_NAME=#{prodName},
+               PROD_COUNT=#{prodCount},
+               PROD_DISCOUNT=#{prodDiscount},
+               PROD_PURCHASE_YN=#{prodPurchaseYn},
+               PROD_CONTENT=#{prodContent},
+               PROD_COMMENT=#{prodComment}
+        WHERE PROD_ID=#{prodId}
+    </update>
+
+    <delete id="deleteProduct" parameterType="int">
+        DELETE FROM PRODUCT WHERE PROD_ID=#{prodId}
+    </delete>
+</mapper>

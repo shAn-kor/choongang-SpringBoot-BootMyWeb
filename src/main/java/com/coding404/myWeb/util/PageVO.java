@@ -26,18 +26,20 @@ public class PageVO {
 
     private Criteria cri;
 
+    private int pageSize = 5; // 페이지네이션 크기
+
     // 생성자 - 생성 시 criteria객체, 전체게시글 수 받는다.
     public PageVO(Criteria cri, int total) {
         this.cri = cri;
         this.total = total;
-        this.page = cri.getPageNum();
+        this.page = cri.getPage();
         this.amount = cri.getAmount();
 
         // 끝페이지 번호 계산 (페이지 네이션에서 끝 번호)
-        this.end = (int)(Math.ceil(this.page / 10.0)) * 10;
+        this.end = (int)(Math.ceil(this.page / (double)this.pageSize)) * this.pageSize;
 
         // 시작페이지 = 끝번호 - 페이지네이션 개수 + 1
-        this.start = end - 10 + 1;
+        this.start = end - this.pageSize + 1;
 
         // 전체끝페이지 = 올림 (총 페이지 / 한 페이지 당 행 개수 )
         this.realEnd = (int) (Math.ceil(total / (double) this.amount));

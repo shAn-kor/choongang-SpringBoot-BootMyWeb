@@ -3,12 +3,15 @@ package com.coding404.myWeb.controller;
 import com.coding404.myWeb.command.ProductVO;
 import com.coding404.myWeb.product.ProductService;
 import com.coding404.myWeb.util.Criteria;
+import com.coding404.myWeb.util.PageVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/product")
@@ -37,13 +40,42 @@ public class ProductController {
         return "redirect:/product/productList";
     }
 
+//    @GetMapping("/productList")
+//    public String productList(Model model, Criteria criteria) {
+//        System.out.println(criteria.toString());
+//
+//        // 현재 로그인되어있는 사람 아이디가 admin 이라고 가정
+//        String userId = "admin";
+//        List<ProductVO> list = productService.getProductList(userId, criteria);
+//        model.addAttribute("list", list);
+//
+//        // 페이지VO
+//        int total = productService.getTotal(userId);
+//        PageVO pageVO = new PageVO(criteria, total);
+//        model.addAttribute("pageVO", pageVO);
+//
+//        return "product/productList";
+//    }
+
+    // 1. criteria 같은 객체에 검색 키워드 추가
+    // 2. 목록sql, total sql 둘다 동적쿼리로 변경
+    // 3. 화면에서 사용자가 검색버튼을 누를때, 다시 page 번호를 1번으로, amount를 10으로
+    // 4. 검색값 유지 (criteria 안에 있음)
+    // 5. 페이지네이션 누를 시, 검색 키워드를 같이 넘겨줘야 한다.
+    // 6. 100씩 보기버튼 처리
     @GetMapping("/productList")
-    public String productList(Model model, Criteria criteria) {
+    public String productList(Model model, @ModelAttribute("criteria")Criteria criteria) {
         System.out.println(criteria.toString());
 
         // 현재 로그인되어있는 사람 아이디가 admin 이라고 가정
         String userId = "admin";
-        model.addAttribute("list", productService.getProductList(userId, criteria));
+        List<ProductVO> list = productService.getProductList(userId, criteria);
+        model.addAttribute("list", list);
+
+        // 페이지VO
+        int total = productService.getTotal(userId, criteria);
+        PageVO pageVO = new PageVO(criteria, total);
+        model.addAttribute("pageVO", pageVO);
 
         return "product/productList";
     }

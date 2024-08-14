@@ -7,6 +7,7 @@
     <insert id="regist" parameterType="ProductVO">
         INSERT INTO PRODUCT(
              PROD_ENDDATE,
+             PROD_CATEGORY,
              PROD_WRITER,
              PROD_NAME,
              PROD_PRICE,
@@ -17,6 +18,7 @@
              PROD_COMMENT
         ) VALUES (
                 #{prodEndDate},
+                #{prodCategory},
                 #{prodWriter},
                 #{prodName},
                 #{prodPrice},
@@ -28,11 +30,88 @@
     )
     </insert>
 
+    <!--동적쿼리 test 구문에는 vo의 getter나 map의 key 값이 사용가능합니다.-->
     <select id="getProductList" resultType="ProductVO">
-        SELECT * FROM PRODUCT WHERE PROD_WRITER=#{prodWriter} ORDER BY PROD_ID DESC LIMIT #{cri.pageStart}, #{cri.amount}
+        SELECT *
+        FROM PRODUCT P
+        LEFT JOIN (SELECT
+        # CONCAT(A1.group_ID, A1.CATEGORY_ID, A1.category_LV, A1.category_detail_LV) AS CATEGORY_KEY, ##카테고리 키
+        CONCAT(A1.group_ID, A1.CATEGORY_ID) AS CATEGORY_KEY, ##카테고리 키 (그룹 + 키 형태로 카테고리분류)
+        CASE A1.category_parent_LV
+        WHEN 0 THEN A1.category_detail_NM
+        WHEN 1 THEN CONCAT(A2.category_detail_NM, ' > ', A1.category_detail_NM)
+        WHEN 2 THEN CONCAT(A3.category_detail_NM, ' > ', A2.category_detail_NM, ' > ', A1.category_detail_NM)
+        END as CATEGORY_NAV
+        FROM PRODUCT_CATEGORY A1
+        LEFT OUTER JOIN PRODUCT_CATEGORY A2
+        ON A1.CATEGORY_PARENT_LV = A2.CATEGORY_LV AND
+        A1.CATEGORY_DETAIL_PARENT_LV = A2.CATEGORY_DETAIL_LV AND A1.GROUP_ID = A2.GROUP_ID
+        LEFT OUTER JOIN PRODUCT_CATEGORY A3
+        ON A2.CATEGORY_PARENT_LV = A3.CATEGORY_LV AND
+        A2.CATEGORY_DETAIL_PARENT_LV = A3.CATEGORY_DETAIL_LV) C
+        ON P.PROD_CATEGORY = C.CATEGORY_KEY
+        WHERE P.PROD_WRITER=#{prodWriter}
+        <if test="cri.searchName != '' and cri.searchName != null ">
+            AND P.PROD_NAME LIKE CONCAT('%', #{cri.searchName}, '%')
+        </if>
+        <if test="cri.searchContent != '' and cri.searchContent != null ">
+            AND P.PROD_CONTENT LIKE CONCAT('%', #{cri.searchContent}, '%')
+        </if>
+        <if test="cri.startDate != '' and cri.startDate != null ">
+            AND P.PROD_ENDDATE >= #{cri.startDate}
+        </if>
+        <if test="cri.endDate != '' and cri.endDate != null ">
+            /* 꺽쇠가 태그를 닫는 것으로 인식하기 때문에 비교는 > 방향만 쓰거나 쿼리문 자체를 순수한 문자열로 인식하도록 <![CDATA[쿼리문]]> 형식으로 사용한다.*/
+            AND #{cri.endDate} >= P.PROD_ENDDATE
+        </if>
+        ORDER BY
+        <if test="cri.searchPrice == 'asc' ">
+            P.PROD_PRICE,
+        </if>
+        <if test="cri.searchPrice == 'desc' ">
+            P.PROD_PRICE DESC,
+        </if>
+        P.PROD_ID DESC
+        LIMIT #{cri.pageStart}, #{cri.amount}
     </select>
     <select id="getProduct" resultType="ProductVO" parameterType="int">
-        SELECT * FROM PRODUCT WHERE PROD_ID=#{prodId}
+        SELECT *
+        FROM PRODUCT P
+                 LEFT JOIN (SELECT
+                                # CONCAT(A1.group_ID, A1.CATEGORY_ID, A1.category_LV, A1.category_detail_LV) AS CATEGORY_KEY, ##카테고리 키
+                                CONCAT(A1.group_ID, A1.CATEGORY_ID) AS CATEGORY_KEY, ##카테고리 키 (그룹 + 키 형태로 카테고리분류)
+                                CASE A1.category_parent_LV
+                                    WHEN 0 THEN A1.category_detail_NM
+                                    WHEN 1 THEN CONCAT(A2.category_detail_NM, ' > ', A1.category_detail_NM)
+                                    WHEN 2 THEN CONCAT(A3.category_detail_NM, ' > ', A2.category_detail_NM, ' > ',
+                                                       A1.category_detail_NM)
+                                    END                             as CATEGORY_NAV
+                            FROM PRODUCT_CATEGORY A1
+                                     LEFT OUTER JOIN PRODUCT_CATEGORY A2
+                                                     ON A1.CATEGORY_PARENT_LV = A2.CATEGORY_LV AND
+                                                        A1.CATEGORY_DETAIL_PARENT_LV = A2.CATEGORY_DETAIL_LV AND
+                                                        A1.GROUP_ID = A2.GROUP_ID
+                                     LEFT OUTER JOIN PRODUCT_CATEGORY A3
+                                                     ON A2.CATEGORY_PARENT_LV = A3.CATEGORY_LV AND
+                                                        A2.CATEGORY_DETAIL_PARENT_LV = A3.CATEGORY_DETAIL_LV) C
+                           ON P.PROD_CATEGORY = C.CATEGORY_KEY
+        WHERE P.PROD_ID = #{prodId}
+    </select>
+    <select id="getTotal" resultType="int">
+        SELECT COUNT(*) AS TOTAL FROM PRODUCT WHERE PROD_WRITER=#{userId}
+        <if test="cri.searchName != '' and cri.searchName != null ">
+            AND PROD_NAME LIKE CONCAT('%', #{cri.searchName}, '%')
+        </if>
+        <if test="cri.searchContent != '' and cri.searchContent != null ">
+            AND PROD_CONTENT LIKE CONCAT('%', #{cri.searchContent}, '%')
+        </if>
+        <if test="cri.startDate != '' and cri.startDate != null ">
+            AND PROD_ENDDATE >= #{cri.startDate}
+        </if>
+        <if test="cri.endDate != '' and cri.endDate != null ">
+            /* 꺽쇠가 태그를 닫는 것으로 인식하기 때문에 비교는 > 방향만 쓰거나 쿼리문 자체를 순수한 문자열로 인식하도록 <![CDATA[쿼리문]]> 형식으로 사용한다.*/
+            AND #{cri.endDate} >= PROD_ENDDATE
+        </if>
     </select>
 
     <update id="updateProduct" parameterType="ProductVO">
@@ -50,4 +129,18 @@
     <delete id="deleteProduct" parameterType="int">
         DELETE FROM PRODUCT WHERE PROD_ID=#{prodId}
     </delete>
+
+    <!--category 1 단계 조회-->
+    <select id="getCategory" resultType="CategoryVO">
+        SELECT * FROM PRODUCT_CATEGORY WHERE CATEGORY_LV=1
+    </select>
+
+    <!--category 2 단계 조회-->
+    <select id="getCategoryChild" parameterType="CategoryVO" resultType="CategoryVO">
+        SELECT *
+        FROM PRODUCT_CATEGORY
+        WHERE GROUP_ID = #{group_id}
+          AND CATEGORY_PARENT_LV = #{category_lv}
+          AND CATEGORY_DETAIL_PARENT_LV = #{category_detail_lv}
+    </select>
 </mapper>

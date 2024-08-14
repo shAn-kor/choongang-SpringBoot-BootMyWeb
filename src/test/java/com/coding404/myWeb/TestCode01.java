@@ -28,6 +28,5 @@ public class TestCode01 {
 //            productMapper.regist(vo);
 //        }
 //    }
-    @Test
-    public void test() {}
+
 }
