@@ -96,37 +96,23 @@
 												<th>등록일</th>
 											</tr>
 												
-											<tr>
-												<td>1</td>
-												<td>표시</td>
-												<td>admin</td>
-												<td>홍길동</td>
-												<td>비타육백</td>
+											<tr th:each="vo, status : ${noticeList}">
+												<td th:text="${status.count}"></td>
+												<td th:text="${vo.noticeDisplayYn == 'Y' ? '표시' : '표시안함'}"></td>
+												<td th:text="${vo.noticeWriterId}"></td>
+												<td th:text="${vo.noticeWriterNick}"></td>
+												<td th:text="${vo.prodName}"></td>
 												<td>
-													<a title="상세보기(클릭)" href="#">비타오백 판매자공지</a>
+													<a title="상세보기(클릭)" th:href="@{/notice/noticeDetail(noticeId=${vo.noticeId})}" th:text="${vo.noticeTitle}"></a>
 												</td>
-												<td>설연휴 공지입니다. 설연휴 부득이한....</td>
-												<td>2016-01-01</td>
+												<td th:text="${vo.noticeContent}"></td>
+												<td th:text="${#temporals.format(vo.noticeRegDate, 'yyyy년MM월dd일 HH시mm분ss초')}"></td>
 											</tr>
 										</table>
 
 
 										<div class="page">
-											<ul>
-												<li><a href="#"><i class="fa fa-angle-double-left"
-															aria-hidden="true"></i></a></li>
-												<li style="margin-right:5px;"><a href="#"><i class="fa fa-angle-left"
-															aria-hidden="true"></i></a></li>
-												<li class="on"><a href="#">1</a></li>
-												<li><a href="#">2</a></li>
-												<li><a href="#">3</a></li>
-												<li><a href="#">4</a></li>
-												<li><a href="#">5</a></li>
-												<li style="margin-left:5px;"><a href="#"><i class="fa fa-angle-right"
-															aria-hidden="true"></i></a></li>
-												<li><a href="#"><i class="fa fa-angle-double-right"
-															aria-hidden="true"></i></a></li>
-											</ul>
+											<th:block th:replace="~{./include/page::page(${pageVO})}"></th:block>
 										</div>
 									</li>
 

@@ -1,6 +1,7 @@
 package com.coding404.myWeb.product;
 
 import com.coding404.myWeb.command.CategoryVO;
+import com.coding404.myWeb.command.ProductUploadVO;
 import com.coding404.myWeb.command.ProductVO;
 import com.coding404.myWeb.util.Criteria;
 import org.apache.ibatis.annotations.Mapper;
@@ -25,4 +26,8 @@ public interface ProductMapper {
     List<CategoryVO> getCategory();
 
     List<CategoryVO> getCategoryChild(CategoryVO vo);
+
+    void uploadFile(ProductUploadVO vo);
+
+    List<ProductUploadVO> getImgs(Integer prodId);
 }

@@ -5,6 +5,7 @@
 
 <mapper namespace="com.coding404.myWeb.product.ProductMapper">
     <insert id="regist" parameterType="ProductVO">
+
         INSERT INTO PRODUCT(
              PROD_ENDDATE,
              PROD_CATEGORY,
@@ -142,5 +143,17 @@
         WHERE GROUP_ID = #{group_id}
           AND CATEGORY_PARENT_LV = #{category_lv}
           AND CATEGORY_DETAIL_PARENT_LV = #{category_detail_lv}
+    </select>
+
+    <insert id="uploadFile" parameterType="ProductUploadVO">
+        <selectKey keyProperty="prodId" resultType="int" order="BEFORE">
+            SELECT MAX(PROD_ID) FROM PRODUCT WHERE PROD_WRITER=#{prodWriter}
+        </selectKey>
+        INSERT INTO PRODUCT_UPLOAD (FILENAME, FILEPATH, UUID, PROD_ID, PROD_WRITER)
+        VALUES (#{filename}, #{filepath}, #{uuid}, #{prodId}, #{prodWriter})
+    </insert>
+
+    <select id="getImgs" parameterType="int" resultType="ProductUploadVO">
+        SELECT * FROM PRODUCT_UPLOAD WHERE PROD_ID = #{prodId} ORDER BY PROD_ID
     </select>
 </mapper>

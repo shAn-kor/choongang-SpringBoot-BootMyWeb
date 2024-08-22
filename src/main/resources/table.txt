@@ -33,6 +33,17 @@ CREATE TABLE NOTICE(
                        NOTICE_TITLE VARCHAR(500),		## 공지 제목
                        NOTICE_CONTENT VARCHAR(5000) 	## 공지 내용
 );
+CREATE TABLE PRODUCT_UPLOAD
+(
+    UPLOAD_NO   INT PRIMARY KEY auto_increment,
+    FILENAME    varchar(100) not null, ##실제파일명
+    FILEPATH    varchar(100) not null, ##폴더명
+    UUID        varchar(50)  not null, ##UUID명
+    REGDATE     TIMESTAMP default now(),
+    PROD_ID     INT,                   ##FK
+    PROD_WRITER VARCHAR(20)            ##FK
+);
+
 
 
 

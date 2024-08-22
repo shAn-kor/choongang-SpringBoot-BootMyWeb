@@ -37,13 +37,13 @@
                                                         <div class="uInputRadioBox">
                                                             <div class="uInputRadio">
                                                                 <label>
-                                                                    <input type="radio" name="prodPurchaseYn" value="N" checked="checked">
+                                                                    <input type="radio" name="noticeDisplayYn" value="N" th:checked="${noticeVO.noticeDisplayYn} == 'N'">
                                                                     <span class="text">공지로 등록함</span>
                                                                 </label>
                                                             </div>
                                                             <div class="uInputRadio">
                                                                 <label>
-                                                                    <input type="radio" name="prodPurchaseYn" value="Y" >
+                                                                    <input type="radio" name="noticeDisplayYn" value="Y" th:checked="${noticeVO.noticeDisplayYn} == 'Y'">
                                                                     <span class="text">등록하지않음</span>
                                                                 </label>
                                                             </div>
@@ -52,18 +52,16 @@
                                                 </tr>
                                                 <tr>
                                                     <th>닉네임</th>
-                                                    <td><input type="text" class="inputw150" name="####"></td>
+                                                    <td><input type="text" class="inputw150" name="noticeWriterNick" th:value="${noticeVO.noticeWriterNick}"></td>
                                                 </tr>
 
                                                 <tr>
                                                     <th>상품명</th>
-                                                    <td>
-                                                        비타육백
-                                                    </td>
+                                                    <td th:text="${noticeVO.prodName}"></td>
                                                 </tr>
                                                 <tr>
                                                     <th>제목</th>
-                                                    <td colspan="5"><input type="text" class="inputw99p" name="####"></td>
+                                                    <td colspan="5"><input type="text" class="inputw99p" name="noticeTitle" th:value="${noticeVO.noticeTitle}"></td>
                                                 </tr>
 
 
@@ -71,7 +69,7 @@
                                                 <tr>
                                                     <th>내용</th>
                                                     <td colspan="5">
-                                                        <div><textarea  class="inputw99p" name="prod_content" style="height: 200px;"></textarea>
+                                                        <div><textarea  class="inputw99p" name="noticeContent" style="height: 200px;" th:text="${noticeVO.noticeContent}"></textarea>
                                                         </div>
                                                     </td>
                                                 </tr>

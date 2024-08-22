@@ -4,53 +4,47 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.coding404.myWeb.notice.NoticeMapper">
-    <insert id="" parameterType="string">
-        INSERT INTO PRODUCT(
-             PROD_ENDDATE,
-             PROD_WRITER,
-             PROD_NAME,
-             PROD_PRICE,
-             PROD_COUNT,
-             PROD_DISCOUNT,
-             PROD_PURCHASE_YN,
-             PROD_CONTENT,
-             PROD_COMMENT
+    <insert id="insertNotice" parameterType="NoticeVO">
+        INSERT INTO NOTICE(
+               NOTICE_REGDATE,
+               NOTICE_DISPLAY_YN,
+               NOTICE_WRITER_ID,
+               NOTICE_WRITER_NICK,
+               PROD_NAME,
+               NOTICE_TITLE,
+               NOTICE_CONTENT
         ) VALUES (
-                #{prodEndDate},
-                #{prodWriter},
+                #{noticeRegDate},
+                #{noticeDisplayYn},
+                #{noticeWriterId},
+                #{noticeWriterNick},
                 #{prodName},
-                #{prodPrice},
-                #{prodCount},
-                #{prodDiscount},
-                #{prodPurchaseYn},
-                #{prodContent},
-                #{prodComment}
-    )
+                #{noticeTitle},
+                #{noticeContent}
+       )
     </insert>
 
-    <!--동적쿼리 test 구문에는 vo의 getter나 map의 key 값이 사용가능합니다.-->
-    <select id="getNoticeNullProductList" parameterType="string" resultType="ProductVO">
-        SELECT P.*
+    <select id="getNoticeNullProductList" resultType="ProductVO">
+        SELECT *
         FROM PRODUCT P
-                 LEFT JOIN NOTICE N ON P.PROD_WRITER = N.NOTICE_WRITER_ID
-        WHERE N.PROD_NAME IS NULL
-    </select>
-    <select id="getProduct" resultType="ProductVO" parameterType="int">
+        LEFT JOIN NOTICE N ON P.PROD_WRITER = N.NOTICE_WRITER_ID AND N.PROD_NAME IS NULL WHERE P.PROD_WRITER=#{userId}
     </select>
 
-    <update id="updateProduct" parameterType="ProductVO">
-        UPDATE PRODUCT SET
-               PROD_ENDDATE=#{prodEndDate},
-               PROD_NAME=#{prodName},
-               PROD_COUNT=#{prodCount},
-               PROD_DISCOUNT=#{prodDiscount},
-               PROD_PURCHASE_YN=#{prodPurchaseYn},
-               PROD_CONTENT=#{prodContent},
-               PROD_COMMENT=#{prodComment}
-        WHERE PROD_ID=#{prodId}
-    </update>
+    <select id="getNoticeList" resultType="NoticeVO">
+        SELECT * FROM NOTICE WHERE NOTICE_WRITER_ID=#{id} ORDER BY NOTICE_ID DESC LIMIT #{cri.pageStart}, #{cri.amount}
+    </select>
 
-    <delete id="deleteProduct" parameterType="int">
-        DELETE FROM PRODUCT WHERE PROD_ID=#{prodId}
-    </delete>
+    <select id="getTotal" resultType="int">
+        SELECT COUNT(*) FROM NOTICE WHERE NOTICE_WRITER_ID=#{id}
+        <if test="cri.searchName != '' and cri.searchName != null ">
+            AND PROD_NAME LIKE CONCAT('%', #{cri.searchName}, '%')
+        </if>
+        <if test="cri.searchContent != '' and cri.searchContent != null ">
+            AND NOTICE_CONTENT LIKE CONCAT('%', #{cri.searchContent}, '%')
+        </if>
+    </select>
+
+    <select id="getNotice" parameterType="string" resultType="NoticeVO">
+        SELECT * FROM NOTICE WHERE NOTICE_ID=#{noticeId}
+    </select>
 </mapper>

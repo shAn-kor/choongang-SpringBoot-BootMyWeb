@@ -40,7 +40,7 @@
                                                     </tr>
                                                     <tr>
                                                         <th>등록자ID</th>
-                                                        <td><input type="text" name="prodWriter" th:value="${vo.prodWriter}" readonly /></td>
+                                                        <td><input type="text" name="prodWriter" th:value="${session.user.id}" readonly /></td>
                                                     </tr>
                                                     <tr>
                                                         <th scope="row">제목(상품명)</th>
@@ -51,42 +51,45 @@
                                                     <tr>
                                                         <th>메인사진</th>
                                                         <td colspan="3">
+                                                            <!--
+                                                                src 경로에는 컨트롤러 요청 경로 적는다.
+                                                            -->
                                                             <!--미리보기 폼-->
                                                             <div class="blockContent">
                                                                 <div class="productText">이미지 수정은 목록을 이용해주세요</div>
                                                                 <div class="productImg">
-                                                                    <div class="imgItem">
-                                                                        <span class="imgKind">대표이미지</span>
+                                                                    <div class="imgItem" th:each="img, status : ${imgs}">
+                                                                        <span class="imgKind" th:text="${status.index == 0 ? '대표이미지' : '배너이미지'}"></span>
+                                                                        <a th:href="@{/download/{filepath}/{uuid}/{filename}(filepath=${img.filepath}, uuid=${img.uuid}, filename=${img.filename})}">(다운로드)</a>
                                                                         <div class="imgWrap">
                                                                             <div class="imgArea">
-                                                                                <img src="../img/item_main.jpg">
+                                                                                <img th:src="@{/display/{filepath}/{uuid}/{filename}(filepath=${img.filepath}, uuid=${img.uuid}, filename=${img.filename})}">
                                                                             </div>
                                                                         </div>
-                                                                    </div>
-                                                                    <div class="imgItem">
-                                                                        <span class="imgKind">배너이미지</span>
-                                                                        <div class="imgWrap">
-                                                                            <div class="imgArea">
-                                                                                <img src="../img/item_banner.jpg">
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="imgItem">
-                                                                        <span class="imgKind">배너이미지</span>
-                                                                        <div class="imgWrap">
-                                                                            <div class="imgArea">
-                                                                                <img src="../img/item_banner.jpg">
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="imgItem">
-                                                                        <span class="imgKind">배너이미지</span>
-                                                                        <div class="imgWrap">
-                                                                            <div class="imgArea">
-                                                                                <img src="../img/item_banner.jpg">
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
+<!--                                                                    <div class="imgItem">-->
+<!--                                                                        <span class="imgKind">배너이미지</span>-->
+<!--                                                                        <div class="imgWrap">-->
+<!--                                                                            <div class="imgArea">-->
+<!--                                                                                <img src="../img/item_banner.jpg">-->
+<!--                                                                            </div>-->
+<!--                                                                        </div>-->
+<!--                                                                    </div>-->
+<!--                                                                    <div class="imgItem">-->
+<!--                                                                        <span class="imgKind">배너이미지</span>-->
+<!--                                                                        <div class="imgWrap">-->
+<!--                                                                            <div class="imgArea">-->
+<!--                                                                                <img src="../img/item_banner.jpg">-->
+<!--                                                                            </div>-->
+<!--                                                                        </div>-->
+<!--                                                                    </div>-->
+<!--                                                                    <div class="imgItem">-->
+<!--                                                                        <span class="imgKind">배너이미지</span>-->
+<!--                                                                        <div class="imgWrap">-->
+<!--                                                                            <div class="imgArea">-->
+<!--                                                                                <img src="../img/item_banner.jpg">-->
+<!--                                                                            </div>-->
+<!--                                                                        </div>-->
+<!--                                                                    </div>-->
                                                                     
                                                                 </div>
                                                             </div>

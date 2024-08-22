@@ -38,8 +38,9 @@
                                                 <tr>
                                                     <th>등록일</th>
                                                     <td colspan="5">
-                                                        <input type="text" class="datepicker" name="regDate" readonly
-                                                               placeholder="날짜선택">
+                                                        <input type="text" class="datepicker" name="noticeRegDate" readonly
+                                                               placeholder="날짜선택" required
+                                                               pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}">
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -67,10 +68,10 @@
 
                                                 <tr>
                                                     <th>아이디</th>
-                                                    <td><input type="text" class="inputw150" name="userId" value="admin"
+                                                    <td><input type="text" class="inputw150" name="noticeWriterId" value="admin"
                                                                readonly></td>
                                                     <th>닉네임</th>
-                                                    <td><input type="text" class="inputw150" name="userNick"
+                                                    <td><input type="text" class="inputw150" name="noticeWriterNick"
                                                                value="admin" readonly></td>
                                                 </tr>
 

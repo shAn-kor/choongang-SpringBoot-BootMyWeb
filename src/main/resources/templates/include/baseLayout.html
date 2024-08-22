@@ -26,7 +26,7 @@
         <h3 style="color: #fff; position: absolute; left: 20px; top: 27px;">coding404 - 연습용 입니다. 이에 대한 무단 복제 및 배포를
             원칙적으로 금합니다.
             원본파일 및 핸드폰 촬영, 동영상강좌 녹화를 통한 무단 복제 · 배포하는 경우 저작권법 제136조에 의한 저작재산권 침해 죄에 해당될 수 있으니 각별한 주의 바랍니다.</h3>
-        <span class="admin_id"><b style="color:#7866c9;">관리자</b>홍길동 님</span>
+        <span class="admin_id"><b style="color:#7866c9;">관리자</b><span th:text="${session.user == null ? 'null' : session.user.id}"></span> 님</span>
     </div>
 
 </header>
@@ -35,9 +35,9 @@
     <span class="menuBtn">버튼</span>
     <ul class="sidenav">
         <li class="sub_menu_toggle">
-            <a href="#">- 상품관리(예제)</a>
+            <a href="#" class="">- 상품관리(예제)</a>
             <ul class="sub_menu ">
-                <li><a href="/product/productReg">-상품등록</a></li>
+                <li><a href="/product/productReg" >-상품등록</a></li>
                 <li><a href="/product/productList">-상품조회 / 수정</a></li>
                 <li><a href="#">-하단메뉴</a></li>
             </ul>
@@ -118,7 +118,27 @@
 
 </footer>
 
+<script th:inline="javascript">
+    // 선택된 메뉴 고정
+    // li > a 태그에 클래스에 sbu_menu_selected 추가
+    // ul 는 display : block
+    // 선택된 a 태그는 on 클래스를 넣어주면 된다.
+    let selectedMenu = JSON.parse(`[[${menu}]]`);
+    console.log(selectedMenu);
+
+    let menu = document.querySelector('.sub_menu a[href="' + selectedMenu + '"]');
+    menu.classList.add('on');
+    console.log(menu);
+
+    let pMenu = menu.parentNode.parentNode.parentNode.firstElementChild;
+    pMenu.classList.add("sub_menu_select")
+
+    let subMenu = pMenu.nextElementSibling;
+    subMenu.display='block';
+
+</script>
 </body>
 </th:block>
+
 
 </html>
